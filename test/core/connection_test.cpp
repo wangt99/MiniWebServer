@@ -1,6 +1,9 @@
 #include <catch2/catch_test_macros.hpp>
 #include <memory>
+#include <string_view>
 #include <thread>
+#include <unistd.h>
+#include <utility>
 
 #include "core/connection.h"
 #include "core/poller.h"
@@ -72,6 +75,42 @@ TEST_CASE("Connection Test", "[core/connection]") {
     connected_conn.WriteToWriteBuffer(server_msg);
     connected_conn.Send();
     sleep(1);
+  }
+
+  SECTION("echo msg from clinet and server") {
+    std::string_view msg {"Hello world from clinet."};
+    std::thread clinet([&] {
+      auto clinet_sock = std::make_unique<Socket>();
+      clinet_sock->Connect(local_host);
+      REQUIRE(clinet_sock->GetFd() != -1);
+      Connection conn(std::move(clinet_sock));
+      conn.WriteToWriteBuffer(msg);
+      conn.Send();
+      sleep(2);
+      conn.Recv();
+      auto echo_msg = conn.ReadAsString();
+      std::cout << "echo msg: " << echo_msg << '\n';
+      // CHECK(echo_msg == msg);
+    });
+    clinet.detach();
+
+    // std::thread server([&] {
+    NetAddress client_addr;
+    auto connected_sock = std::make_unique<Socket>(server_conn.GetSocket()->Accept(client_addr));
+    connected_sock->SetNonBlocking();
+    REQUIRE(connected_sock->GetFd() != -1);
+    Connection clinet_conn(std::move(connected_sock));
+    clinet_conn.Recv();
+    auto from_msg = clinet_conn.ReadAsString();
+    CHECK(msg == from_msg);
+    std::cout << "from msg: " << from_msg << '\n';
+    // echo msg to client
+    clinet_conn.WriteToWriteBuffer(from_msg);
+    clinet_conn.Send();
+    // });
+    // server.detach();
+
+    // server.join();
   }
 
 }

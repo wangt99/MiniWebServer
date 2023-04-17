@@ -16,4 +16,5 @@ message("compiling on the OS of ${CMAKE_SYSTEM_NAME}")
 
 add_subdirectory(src bin)
 add_subdirectory(test)
+add_subdirectory(examples)
 

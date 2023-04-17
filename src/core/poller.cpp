@@ -37,8 +37,8 @@ auto Poller::Poll(int timeout) -> std::vector<Connection * > {
   std::vector<Connection *> events_happen;
   int ready_num = epoll_wait(poll_fd_, poll_envents, poll_size_, timeout);
   if (ready_num == -1) {
-    // LOG_ERROR("Poller: epoll_wait error");
-    std::cout << "Poller: epoll_wait error\n";
+    LOG_ERROR("Poller: epoll_wait error");
+    // std::cout << "Poller: epoll_wait error\n";
     exit(EXIT_FAILURE);
   }
 

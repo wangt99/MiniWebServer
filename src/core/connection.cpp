@@ -32,7 +32,11 @@ void Connection::Send() {
   ClearWriteBuffer();
 }
 
-
+/**
+ * @brief recv from client, and return the pair, which represent actual read and exit flag.
+ * 
+ * @return std::pair<ssize_t, bool>
+ */
 auto Connection::Recv() -> std::pair<ssize_t, bool> {
   int read = 0;
   char buf[TEMP_BUF_SIZE + 1];
@@ -45,13 +49,16 @@ auto Connection::Recv() -> std::pair<ssize_t, bool> {
       memset(buf, 0, TEMP_BUF_SIZE);
     } else if (curr_read == 0) {
       // the client exit.
+      // std::cout << "client exit " << read << '\n';
       return {read, true};
     }
     else if (curr_read == -1 && errno == EINTR) {
       // normal interrupt
+      // std::cout << "normal interrupt " << read << '\n';
       continue;
     } else if (curr_read == -1 && (errno == EAGAIN && errno == EWOULDBLOCK)) {
       //all data read
+      // std::cout << "all data read " << read << '\n';
       break;
     } else {
       LOG_ERROR("Connection:Recv error");

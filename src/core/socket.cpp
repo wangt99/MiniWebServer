@@ -1,4 +1,5 @@
 #include "core/socket.h"
+#include "common/logger.h"
 
 #include <netdb.h>
 #include <stdexcept>
@@ -41,7 +42,7 @@ void Socket::Connect(const NetAddress & server_address) {
     CreateByProtocol(server_address.GetProtocol());
   }
   if ((connect(socket_fd_, server_address.YieldAddr(), *server_address.YieldAddrLen())) == -1) {
-    // LOG_ERROR
+    LOG_ERROR("Socket: connect() error");
     throw std::logic_error("Socket: connect() error");
   }
 }
@@ -56,8 +57,7 @@ void Socket::Bind(const NetAddress & server_address, bool set_reuseable) {
   }
 
   if ((bind(socket_fd_, server_address.YieldAddr(), *server_address.YieldAddrLen())) == -1) {
-    // TODO
-    // LOG_ERROR
+    LOG_ERROR("Socket: bind() error");
     throw std::logic_error("Socket: bind() error");
   }
 }
@@ -65,7 +65,7 @@ void Socket::Bind(const NetAddress & server_address, bool set_reuseable) {
 void Socket::Listen() {
   assert(socket_fd_ != -1 && "Can't listen with an invalid fd");
   if ((listen(socket_fd_, BACK_LOG)) == -1) {
-    // TODO
+    LOG_ERROR("Socket: listen() error");
     throw std::logic_error("Socket: listen() error");
   }
 }
@@ -83,7 +83,7 @@ auto Socket::Accept(const NetAddress & client_address) -> int{
 void Socket::SetNonBlocking() {
   assert(socket_fd_ != -1);
   if ((fcntl(socket_fd_, F_SETFL, GetAttrs() | O_NONBLOCK)) == -1) {
-    // 
+    LOG_ERROR("Socket: fcntl() error");
     throw std::logic_error("Socket: set nonblocking error");
   }
 }
@@ -95,7 +95,7 @@ void Socket::SetReuseable() {
 
   if (setsockopt(socket_fd_, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes)) == -1 || 
       setsockopt(socket_fd_, SOL_SOCKET, SO_REUSEPORT, &yes, sizeof(yes)) == -1) {
-    //
+    LOG_ERROR("Socket: setsockopt() error");
     throw std::logic_error("Socket: setsockopt() error");
   }
 }
