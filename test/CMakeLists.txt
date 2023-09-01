@@ -43,6 +43,17 @@ target_link_libraries(thread_pool_test PRIVATE Catch2::Catch2WithMain pine_core)
 add_executable(log_test ${PINE_TEST_DIR}/log_test.cpp)
 target_link_libraries(log_test PRIVATE Catch2::Catch2WithMain pine_log)
 
+add_executable(header_test ${PINE_TEST_DIR}/http/header_test.cpp)
+target_link_libraries(header_test PRIVATE Catch2::Catch2WithMain pine_http)
+
+add_executable(request_test ${PINE_TEST_DIR}/http/request_test.cpp)
+target_link_libraries(request_test PRIVATE Catch2::Catch2WithMain pine_http)
+
+add_executable(response_test ${PINE_TEST_DIR}/http/response_test.cpp)
+target_link_libraries(response_test PRIVATE Catch2::Catch2WithMain pine_http)
+
+add_executable(cgier_test ${PINE_TEST_DIR}/http/cgier_test.cpp)
+target_link_libraries(cgier_test PRIVATE Catch2::Catch2WithMain pine_http)
 
 # file(GLOB_RECURSE PINE_TEST_SOURCES "${PROJECT_SOURCE_DIR}/test/*/*test.cpp")
 

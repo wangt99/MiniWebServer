@@ -3,6 +3,7 @@
 #include <stdexcept>
 #include <sys/socket.h>
 #include <sys/types.h>
+#include "common/logger.h"
 #include "core/net_address.h"
 
 namespace pine {
@@ -46,6 +47,8 @@ public:
 
   void SetNonBlocking();
 
+  // void SetTimeout(int timeout);
+
   auto GetAttrs() -> int;
 
 private:
@@ -59,8 +62,7 @@ private:
     }
     
     if (socket_fd_ == -1) {
-      // TODO
-      // throw exception and print log
+      LOG_ERROR("Socket: socket() error.")
       throw std::logic_error("Socket: socket() error.");
     }
   }

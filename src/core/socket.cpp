@@ -1,6 +1,7 @@
 #include "core/socket.h"
 #include "common/logger.h"
 
+#include <asm-generic/socket.h>
 #include <netdb.h>
 #include <stdexcept>
 #include <sys/socket.h>
@@ -87,6 +88,14 @@ void Socket::SetNonBlocking() {
     throw std::logic_error("Socket: set nonblocking error");
   }
 }
+
+// void Socket::SetTimeout(int timeout) {
+//   assert(socket_fd_ != -1);
+//   if (setsockopt(socket_fd_, SOL_SOCKET, SO_SNDTIMEO, )) {
+//     LOG_ERROR("Socket: setsockopt() error");
+//     throw std::logic_error("Socket: setsockopt() error");
+//   }
+// }
 
 
 void Socket::SetReuseable() {
